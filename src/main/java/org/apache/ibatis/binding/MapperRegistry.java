@@ -27,13 +27,15 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * mapper接口和对应的代理对象工厂的注册中心
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
  */
 public class MapperRegistry {
 
-  private final Configuration config;
+  private final Configuration config;//config对象，mybatis全局唯一的
+  //记录了mapper接口与对应MapperProxyFactory之间的关系
   private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
 
   public MapperRegistry(Configuration config) {
@@ -57,6 +59,11 @@ public class MapperRegistry {
     return knownMappers.containsKey(type);
   }
 
+  /**
+   * 将mapper接口的工厂类添加到mapper注册中心
+   * @param type
+   * @param <T>
+   */
   public <T> void addMapper(Class<T> type) {
     if (type.isInterface()) {
       if (hasMapper(type)) {
@@ -64,10 +71,12 @@ public class MapperRegistry {
       }
       boolean loadCompleted = false;
       try {
+        //实例化Mapper接口的代理工程类，并将信息添加至knownMappers
         knownMappers.put(type, new MapperProxyFactory<>(type));
         // It's important that the type is added before the parser is run
         // otherwise the binding may automatically be attempted by the
         // mapper parser. If the type is already known, it won't try.
+        //解析接口上的注解信息，并添加至configuration对象
         MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
         parser.parse();
         loadCompleted = true;

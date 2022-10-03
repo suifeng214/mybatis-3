@@ -30,20 +30,62 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  */
 public class ResultMapping {
 
+  /**
+   * 引用的configuration对象
+   */
   private Configuration configuration;
+  /**
+   * 对应节点的property属性
+   */
   private String property;
+  /**
+   *对应节点的column属性
+   */
   private String column;
+  /**
+   *对应节点的javaType属性
+   */
   private Class<?> javaType;
+  /**
+   *对应节点的jdbcType属性
+   */
   private JdbcType jdbcType;
+  /**
+   * 对应节点的typeHandler属性
+   */
   private TypeHandler<?> typeHandler;
+  /**
+   *对应节点的resultMap属性,嵌套结果时使用
+   */
   private String nestedResultMapId;
+  /**
+   * 对应节点的select属性,嵌套查询时使用
+   */
   private String nestedQueryId;
+  /**
+   *对应节点的notNullColumn属性
+   */
   private Set<String> notNullColumns;
+  /**
+   * 对应节点的columnPrefix属性
+   */
   private String columnPrefix;
+  /**
+   *标志,id 或者 constructor
+   */
   private List<ResultFlag> flags;
   private List<ResultMapping> composites;
+  /**
+   * 对应节点的resultSet属性
+   */
   private String resultSet;
+  /**
+   * 对应节点的foreignColumn属性
+   */
   private String foreignColumn;
+  /**
+   *对应节点的fetchType属性,是否延迟加载
+   */
   private boolean lazy;
 
   ResultMapping() {

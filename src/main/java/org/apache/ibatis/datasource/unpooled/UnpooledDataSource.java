@@ -38,19 +38,31 @@ import org.apache.ibatis.io.Resources;
  */
 public class UnpooledDataSource implements DataSource {
 
+  /**
+   * 驱动类的类加载器
+   */
   private ClassLoader driverClassLoader;
+  /**
+   * 数据库连接相关配置信息
+   */
   private Properties driverProperties;
-  private static Map<String, Driver> registeredDrivers = new ConcurrentHashMap<>();
+  private static Map<String, Driver> registeredDrivers = new ConcurrentHashMap<>();//缓存已注册的数据库驱动类
 
   private String driver;
   private String url;
   private String username;
   private String password;
 
+  /**
+   * 是否自动提交
+   */
   private Boolean autoCommit;
+  /**
+   * 事务隔离级别
+   */
   private Integer defaultTransactionIsolationLevel;
   private Integer defaultNetworkTimeout;
-
+  //提问：为什么Class.forName("com.mysql.jdbc.Driver")后，驱动就被注册到DriverManager?
   static {
     Enumeration<Driver> drivers = DriverManager.getDrivers();
     while (drivers.hasMoreElements()) {
@@ -219,9 +231,11 @@ public class UnpooledDataSource implements DataSource {
     return doGetConnection(props);
   }
 
+  //从这个代码可以看出，unpooledDatasource获取连接的方式和手动获取连接的方式是一样的
   private Connection doGetConnection(Properties properties) throws SQLException {
     initializeDriver();
     Connection connection = DriverManager.getConnection(url, properties);
+    //设置事务是否自动提交，事务的隔离级别
     configureConnection(connection);
     return connection;
   }

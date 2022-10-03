@@ -42,11 +42,13 @@ import java.util.concurrent.locks.ReadWriteLock;
 public interface Cache {
 
   /**
+   * 缓存实现类的id
    * @return The identifier of this cache
    */
   String getId();
 
   /**
+   * 往缓存中添加数据，key一般是CacheKey对象
    * @param key
    *          Can be any object but usually it is a {@link CacheKey}
    * @param value
@@ -55,6 +57,7 @@ public interface Cache {
   void putObject(Object key, Object value);
 
   /**
+   * 根据指定的key从缓存获取数据
    * @param key
    *          The key
    * @return The object stored in the cache.
@@ -76,14 +79,16 @@ public interface Cache {
    *          The key
    * @return Not used
    */
-  Object removeObject(Object key);
+  Object removeObject(Object key);//根据指定的key从缓存删除数据
 
   /**
+   * 清空缓存
    * Clears this cache instance.
    */
   void clear();
 
   /**
+   * 获取缓存的个数
    * Optional. This method is not called by the core.
    *
    * @return The number of elements stored in the cache (not its capacity).
@@ -99,6 +104,6 @@ public interface Cache {
    */
   default ReadWriteLock getReadWriteLock() {
     return null;
-  }
+  }//获取读写锁
 
 }

@@ -15,6 +15,7 @@
  */
 package org.apache.ibatis.executor.result;
 
+
 import org.apache.ibatis.session.ResultContext;
 
 /**
@@ -22,8 +23,17 @@ import org.apache.ibatis.session.ResultContext;
  */
 public class DefaultResultContext<T> implements ResultContext<T> {
 
+  /**
+   * 暂存映射结果对象，之后会放入DefaultResultHandler容器当中
+   */
   private T resultObject;
+  /**
+   * 记录暂存映射结果对象个数
+   */
   private int resultCount;
+  /**
+   * 控制是否停止映射
+   */
   private boolean stopped;
 
   public DefaultResultContext() {

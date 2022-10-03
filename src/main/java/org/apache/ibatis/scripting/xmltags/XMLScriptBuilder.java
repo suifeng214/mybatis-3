@@ -63,14 +63,19 @@ public class XMLScriptBuilder extends BaseBuilder {
     nodeHandlerMap.put("bind", new BindHandler());
   }
 
+  /**
+   * 解析sql脚本，返回SqlSource
+   * @return
+   */
   public SqlSource parseScriptNode() {
     MixedSqlNode rootSqlNode = parseDynamicTags(context);
     SqlSource sqlSource;
     if (isDynamic) {
-      sqlSource = new DynamicSqlSource(configuration, rootSqlNode);
+      sqlSource = new DynamicSqlSource(configuration, rootSqlNode);//动态sql的解析
     } else {
-      sqlSource = new RawSqlSource(configuration, rootSqlNode, parameterType);
+      sqlSource = new RawSqlSource(configuration, rootSqlNode, parameterType);//非动态sql的解析
     }
+    //实际返回的都是StaticSqlSource，可以直接让数据库执行的sql语句，包含？占位符
     return sqlSource;
   }
 

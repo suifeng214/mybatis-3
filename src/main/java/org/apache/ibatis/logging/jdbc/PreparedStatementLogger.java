@@ -41,6 +41,10 @@ public final class PreparedStatementLogger extends BaseJdbcLogger implements Inv
     this.statement = stmt;
   }
 
+  //1，增强PreparedStatement的setxxx方法将参数设置到columnMap、columnNames、columnValues，为打印参数做好准备
+  //2. 增强PreparedStatement的execute相关方法，当方法执行时，通过动态代理打印参数,返回动态代理能力的resultSet
+  //3. 如果是查询，增强PreparedStatement的getResultSet方法，返回动态代理能力的resultSet
+  //   如果是更新，直接打印影响的行数
   @Override
   public Object invoke(Object proxy, Method method, Object[] params) throws Throwable {
     try {

@@ -27,7 +27,7 @@ public class SetSqlNode extends TrimSqlNode {
 
   private static final List<String> COMMA = Collections.singletonList(",");
 
-  public SetSqlNode(Configuration configuration,SqlNode contents) {
+  public SetSqlNode(Configuration configuration, SqlNode contents) {
     super(configuration, contents, "SET", COMMA, null, COMMA);
   }
 

@@ -41,13 +41,30 @@ public abstract class BaseStatementHandler implements StatementHandler {
   protected final Configuration configuration;
   protected final ObjectFactory objectFactory;
   protected final TypeHandlerRegistry typeHandlerRegistry;
+  /**
+   * 结果处理器，对数据库返回的结果集（ResultSet）进行封装，返回用户指定的实体类型；
+   */
   protected final ResultSetHandler resultSetHandler;
+  /**
+   * sql占位符处理器，对预编译的SQL语句进行参数设置
+   */
   protected final ParameterHandler parameterHandler;
-
+  /**
+   * 记录执行语句的executor对象
+   */
   protected final Executor executor;
+  /**
+   * sql语句对应的MappedStatement
+   */
   protected final MappedStatement mappedStatement;
+  /**
+   * 分页信息
+   */
   protected final RowBounds rowBounds;
 
+  /**
+   * sql语句
+   */
   protected BoundSql boundSql;
 
   protected BaseStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
@@ -80,13 +97,23 @@ public abstract class BaseStatementHandler implements StatementHandler {
     return parameterHandler;
   }
 
+  /**
+   * 使用模板模式，定义了获取Statement的步骤，其子类实现实例化Statement的具体的方式；
+   * @param connection
+   * @param transactionTimeout
+   * @return
+   * @throws SQLException
+   */
   @Override
   public Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException {
     ErrorContext.instance().sql(boundSql.getSql());
     Statement statement = null;
     try {
+      //通过不同的子类实例化不同的Statement，分为三类：simple(statment)、prepare(prepareStatement)、callable(CallableStatementHandler)
       statement = instantiateStatement(connection);
+      //设置超时时间
       setStatementTimeout(statement, transactionTimeout);
+      //设置数据集大小
       setFetchSize(statement);
       return statement;
     } catch (SQLException e) {

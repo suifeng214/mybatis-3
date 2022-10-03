@@ -36,8 +36,17 @@ import org.apache.ibatis.cache.CacheException;
  */
 public class BlockingCache implements Cache {
 
+  /**
+   * //阻塞的超时时长
+   */
   private long timeout;
+  /**
+   * 被装饰的底层对象，一般是PerpetualCache
+   */
   private final Cache delegate;
+  /**
+   * 锁对象集，粒度到key值
+   */
   private final ConcurrentHashMap<Object, CountDownLatch> locks;
 
   public BlockingCache(Cache delegate) {
@@ -66,9 +75,9 @@ public class BlockingCache implements Cache {
 
   @Override
   public Object getObject(Object key) {
-    acquireLock(key);
+    acquireLock(key);//根据key获得锁对象，获取锁成功加锁，获取锁失败阻塞一段时间重试
     Object value = delegate.getObject(key);
-    if (value != null) {
+    if (value != null) {//获取数据成功的，要释放锁
       releaseLock(key);
     }
     return value;

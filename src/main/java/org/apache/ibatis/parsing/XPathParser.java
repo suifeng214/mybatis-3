@@ -41,6 +41,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
+ * 使用dom和xpath技术解析xml文件
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */

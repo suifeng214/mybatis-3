@@ -38,6 +38,7 @@ import org.apache.ibatis.reflection.property.PropertyCopier;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.apache.ibatis.session.Configuration;
 
+
 /**
  * @author Eduardo Macarron
  */

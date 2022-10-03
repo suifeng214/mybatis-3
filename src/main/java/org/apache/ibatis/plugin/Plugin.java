@@ -31,8 +31,17 @@ import org.apache.ibatis.util.MapUtil;
  */
 public class Plugin implements InvocationHandler {
 
+  /**
+   * 封装的真正提供服务的对象
+   */
   private final Object target;
+  /**
+   * 自定义的拦截器
+   */
   private final Interceptor interceptor;
+  /**
+   * 解析@Intercepts注解得到的signature信息
+   */
   private final Map<Class<?>, Set<Method>> signatureMap;
 
   private Plugin(Object target, Interceptor interceptor, Map<Class<?>, Set<Method>> signatureMap) {
@@ -41,11 +50,19 @@ public class Plugin implements InvocationHandler {
     this.signatureMap = signatureMap;
   }
 
+  /**
+   * 静态方法，用于帮助Interceptor生成动态代理
+   * @param target
+   * @param interceptor
+   * @return
+   */
   public static Object wrap(Object target, Interceptor interceptor) {
+    //解析Interceptor上@Intercepts注解得到的signature信息
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
-    Class<?> type = target.getClass();
-    Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
+    Class<?> type = target.getClass();//获取目标对象的类型
+    Class<?>[] interfaces = getAllInterfaces(type, signatureMap);//获取目标对象实现的接口（拦截器可以拦截4大对象实现的接口）
     if (interfaces.length > 0) {
+      //使用jdk的方式创建动态代理
       return Proxy.newProxyInstance(
           type.getClassLoader(),
           interfaces,
@@ -57,10 +74,12 @@ public class Plugin implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
+      //获取当前接口可以被拦截的方法
       Set<Method> methods = signatureMap.get(method.getDeclaringClass());
-      if (methods != null && methods.contains(method)) {
+      if (methods != null && methods.contains(method)) {//如果当前方法需要被拦截，则调用interceptor.intercept方法进行拦截处理
         return interceptor.intercept(new Invocation(target, method, args));
       }
+      //如果当前方法不需要被拦截，则调用对象自身的方法
       return method.invoke(target, args);
     } catch (Exception e) {
       throw ExceptionUtil.unwrapThrowable(e);
@@ -68,11 +87,13 @@ public class Plugin implements InvocationHandler {
   }
 
   private static Map<Class<?>, Set<Method>> getSignatureMap(Interceptor interceptor) {
+    //获取@Intercepts注解实例
     Intercepts interceptsAnnotation = interceptor.getClass().getAnnotation(Intercepts.class);
     // issue #251
     if (interceptsAnnotation == null) {
       throw new PluginException("No @Intercepts annotation was found in interceptor " + interceptor.getClass().getName());
     }
+    //获取其中@Signature实例，并将里面的method信息添加至signatureMap中
     Signature[] sigs = interceptsAnnotation.value();
     Map<Class<?>, Set<Method>> signatureMap = new HashMap<>();
     for (Signature sig : sigs) {

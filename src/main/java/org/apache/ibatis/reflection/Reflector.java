@@ -54,12 +54,33 @@ import org.apache.ibatis.util.MapUtil;
 public class Reflector {
 
   private static final MethodHandle isRecordMethodHandle = getIsRecordMethodHandle();
+  /**
+   * 对应的class
+   */
   private final Class<?> type;
+  /**
+   * 可读属性的名称集合，存在get方法即可读
+   */
   private final String[] readablePropertyNames;
+  /**
+   * 可写属性的名称集合，存在set方法即可写
+   */
   private final String[] writablePropertyNames;
+  /**
+   * 保存属性相关的set方法
+   */
   private final Map<String, Invoker> setMethods = new HashMap<>();
+  /**
+   * 保存属性相关的get方法
+   */
   private final Map<String, Invoker> getMethods = new HashMap<>();
+  /**
+   * 保存属性相关的set方法入参类型
+   */
   private final Map<String, Class<?>> setTypes = new HashMap<>();
+  /**
+   * 保存属性相关的get方法返回类型
+   */
   private final Map<String, Class<?>> getTypes = new HashMap<>();
   private Constructor<?> defaultConstructor;
 
